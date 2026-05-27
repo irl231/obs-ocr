@@ -159,6 +159,10 @@ std::string run_tesseract_ocr(filter_data *tf, const cv::Mat &image)
 	// run the tesseract model
 	tf->tesseract_model->SetImage(image.data, image.cols, image.rows, image.channels(),
 				      (int)image.step);
+	
+	// tf->tesseract_model->SetRectangle(left, top, width, height);
+	tf->tesseract_model->SetRectangle(0, 490, 300, 100);
+	
 	char *text = tf->tesseract_model->GetUTF8Text();
 	if (text == nullptr) {
 		return "";
