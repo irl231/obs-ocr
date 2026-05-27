@@ -69,7 +69,19 @@ function(_setup_obs_studio)
   elseif(OS_MACOS)
     set(_cmake_generator "Xcode")
     set(_cmake_arch "-DCMAKE_OSX_ARCHITECTURES:STRING='arm64;x86_64'")
-    set(_cmake_extra "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+    execute_process(
+      COMMAND xcrun --sdk macosx --show-sdk-path
+      OUTPUT_VARIABLE _macos_sdk_path
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      RESULT_VARIABLE _macos_sdk_result
+      ERROR_QUIET)
+
+    if(NOT _macos_sdk_result EQUAL 0 OR NOT _macos_sdk_path)
+      set(_macos_sdk_path macosx)
+    endif()
+
+    set(_cmake_extra "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
+                     "-DCMAKE_OSX_SYSROOT=${_macos_sdk_path}")
     set(_cmake_version "3.0.0")
   endif()
 
